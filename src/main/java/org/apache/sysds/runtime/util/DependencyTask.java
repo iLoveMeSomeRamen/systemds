@@ -45,12 +45,12 @@ public class DependencyTask<E> implements Callable<E>, Node {
     private ExecutorService _pool;
 
 
-    public DependencyTask(Callable<E> task, List<DependencyTask<?>> dependantTasks){
+    public DependencyTask(Callable<E> task, List<DependencyTask<?>> dependantTasks) {
         _dependantTasks = dependantTasks;
         _task = task;
     }
 
-    public void addPool(ExecutorService pool){
+    public void addPool(ExecutorService pool) {
         _pool = pool;
     }
 
@@ -62,12 +62,12 @@ public class DependencyTask<E> implements Callable<E>, Node {
         return _rdy == 0;
     }
 
-    public Callable<E> getTask(){
+    public Callable<E> getTask() {
         return _task;
     }
 
-    private boolean decrease(){
-        synchronized (this){
+    private boolean decrease() {
+        synchronized (this) {
             _rdy -= 1;
             return isReady();
         }
@@ -82,8 +82,8 @@ public class DependencyTask<E> implements Callable<E>, Node {
     public E call() throws Exception {
         E ret = _task.call();
         _dependantTasks.forEach(t -> {
-            if(t.decrease()){
-                if(_pool == null)
+            if (t.decrease()) {
+                if (_pool == null)
                     throw new DMLRuntimeException("ExecutorService was not set for DependencyTask");
                 t._future.complete(_pool.submit(t));
             }
