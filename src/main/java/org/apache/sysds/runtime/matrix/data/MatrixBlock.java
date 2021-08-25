@@ -648,23 +648,6 @@ public class MatrixBlock extends MatrixValue implements CacheBlock, Externalizab
 		}
 	}
 
-	/*
-		Thread save set.
-		Blocks need to be allocated, and in case of MCSR sparse, all rows 
-		that are going to be accessed need to be allocated as well.
-	 */
-	public void quickSetValueThreadSafe(int r, int c, double v) {
-		if(sparse) {
-			if(!(sparseBlock instanceof SparseBlockMCSR))
-				throw new RuntimeException("Only MCSR Blocks are supported for Multithreaded sparse set.");
-			synchronized (sparseBlock.get(r)) {
-				sparseBlock.set(r,c,v);
-			}
-		}
-		else
-			denseBlock.set(r,c,v);
-	}
-
 	public double quickGetValueThreadSafe(int r, int c) {
 		if(sparse) {
 			if(!(sparseBlock instanceof SparseBlockMCSR))
